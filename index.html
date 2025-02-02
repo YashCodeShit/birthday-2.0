@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Birthday Countdown</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.6.0/confetti.browser.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap');
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #121212;
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .container {
+            padding: 3rem;
+            border-radius: 20px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .countdown {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .time-box {
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            min-width: 110px;
+            transition: all 0.3s ease-in-out;
+        }
+        
+        .time-box:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.25);
+        }
+        
+        .number {
+            font-size: 4rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #ffcc00;
+            text-shadow: 0 0 15px rgba(255, 204, 0, 0.6);
+        }
+        
+        .label {
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.9;
+        }
+        
+        .birthday-message {
+            display: none;
+            animation: fadeIn 2s;
+        }
+        
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: center;
+            margin-top: 2rem;
+        }
+        
+        .cool-button {
+            padding: 1rem 2.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ff7eb3, #ff758c);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .cool-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 25px rgba(255, 120, 140, 0.5);
+        }
+
+        #linkButton {
+            background: linear-gradient(45deg, #ffcc00, #ff8800);
+        }
+
+        #image-container {
+            margin-top: 20px;
+            width: 250px;
+            height: 250px;
+            overflow: hidden;
+            border-radius: 15px;
+        }
+
+        #changing-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 15px;
+        }
+        #image-container {
+    margin: 20px auto; /* Centering */
+    width: 250px;
+    height: 250px;
+    overflow: hidden;
+    border-radius: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="container">
+        <div id="countdown-container">
+            <h1>Countdown to the Big Day! 🎉</h1>
+            
+            <!-- Image Slideshow -->
+            <div id="image-container">
+                <img id="changing-image" src="IMG_2155.jpg" alt="Birthday Image">
+            </div>
+
+            <div class="countdown">
+                <div class="time-box">
+                    <div id="days" class="number">00</div>
+                    <div class="label">Days</div>
+                </div>
+                <div class="time-box">
+                    <div id="hours" class="number">00</div>
+                    <div class="label">Hours</div>
+                </div>
+                <div class="time-box">
+                    <div id="minutes" class="number">00</div>
+                    <div class="label">Minutes</div>
+                </div>
+                <div class="time-box">
+                    <div id="seconds" class="number">00</div>
+                    <div class="label">Seconds</div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="birthday-message" class="birthday-message">
+            <h1>🎉 Happy Birthday! 🎂</h1>
+            <p>May your day be filled with joy, laughter, and wonderful moments!</p>
+            <div class="button-container">
+                <a href="https://yashcodeshit.github.io/birthday/" id="linkButton" class="cool-button" onclick="window.location.href = getCustomLink()">Open it! 🎁</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const images = [
+            "IMG_8895.jpg",
+            "IMG_1936.jpg",
+            "IMG_2155.jpg",
+            "IMG_2698.jpg",
+            "IMG_2699.jpg",
+            "IMG_5211.jpg",
+            "IMG_6208.jpg",
+            "IMG_3055.jpg",
+        ];
+
+        let currentIndex = 0;
+        function changeImage() {
+            document.getElementById('changing-image').src = images[currentIndex];
+            currentIndex = (currentIndex + 1) % images.length;
+        }
+
+        setInterval(changeImage, 3000); // Change image every 3 seconds
+
+        const targetDate = new Date('2025-02-03T00:00:00').getTime();
+        
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+            
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            
+            document.getElementById('days').textContent = String(days).padStart(2, '0');
+            document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+            document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+            document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+            
+            if (distance < 0) {
+                clearInterval(countdownInterval);
+                document.getElementById('countdown-container').style.display = 'none';
+                document.getElementById('birthday-message').style.display = 'block';
+                triggerConfetti();
+            }
+        }
+
+        updateCountdown();
+        const countdownInterval = setInterval(updateCountdown, 1000);
+    </script>
+    
+</body>
+</html>
